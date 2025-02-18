@@ -9,7 +9,7 @@
         android:id="@+id/textViewWelcome"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="Welcome!"
-        android:textSize="24sp"
-        android:gravity="center" />
+        android:textSize="24sp" />
 </LinearLayout>

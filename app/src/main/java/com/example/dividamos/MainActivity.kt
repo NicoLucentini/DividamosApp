@@ -48,11 +48,9 @@ class MainActivity : ComponentActivity() {
         apiService.login(nombre, password).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    val intent = Intent(this@MainActivity, HomeActivity::class.java)
-                    intent.putExtra("name", nombre);
-                    startActivity(intent)
+                    onLoginSuccesfull(nombre)
                 } else {
-                    Toast.makeText(context, "Login failed!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Login failed!", Toast.LENGTH_LONG).show()
                 }
             }
 
@@ -65,11 +63,9 @@ class MainActivity : ComponentActivity() {
         apiService.crear(nombre, password).enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 if (response.isSuccessful) {
-                    val intent = Intent(this@MainActivity, HomeActivity::class.java)
-                    intent.putExtra("nombre", nombre);
-                    startActivity(intent)
+                  onLoginSuccesfull(nombre)
                 } else {
-                    Toast.makeText(context, "Login failed!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Login failed!", Toast.LENGTH_LONG).show()
                 }
             }
 
@@ -77,6 +73,11 @@ class MainActivity : ComponentActivity() {
                 Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+    fun onLoginSuccesfull(nombre: String){
+        val intent = Intent(this@MainActivity, HomeActivity::class.java)
+        intent.putExtra("nombre", nombre);
+        startActivity(intent)
     }
 }
 

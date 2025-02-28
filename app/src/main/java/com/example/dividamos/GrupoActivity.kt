@@ -1,9 +1,7 @@
 package com.example.dividamos
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -14,14 +12,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
-class HomeActivity : AppCompatActivity() {
+class GrupoActivity : AppCompatActivity() {
     private lateinit var welcomeText: TextView
     private lateinit var buttonContainer: LinearLayout
 
+    var idGrupo = 0;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
+        setContentView(R.layout.activity_grupo)
 
         // Get references
         welcomeText = findViewById(R.id.textViewWelcome)
@@ -29,21 +27,18 @@ class HomeActivity : AppCompatActivity() {
 
 
         // Retrieve username from Intent
-        //val username = intent.getStringExtra("nombre") ?: "Guest"
-        val usuario : Usuario? = intent.getParcelableExtra<Usuario>("user_data")
-
-        //val username = intent.getStringExtra("nombre") ?: "Guest"
-        setTitle("Welcome , ${usuario?.nombre} , id ${usuario?.id}!")
-        welcomeText.text = "This are your groups"
+        idGrupo = intent.getStringExtra("idGrupo")?.toInt() ?: 0
+        setTitle("Gastos!")
+        welcomeText.text = "This are your gastos"
 
         // Fetch data from API
-        fetchGrupos()
+        fetchGastos()
     }
 
-    private fun fetchGrupos() {
+    private fun fetchGastos() {
 
-        RetrofitClient.apiService.getGrupos(1).enqueue(object : Callback<List<Grupo>> {
-            override fun onResponse(call: Call<List<Grupo>>, response: Response<List<Grupo>>) {
+        RetrofitClient.apiService.getGastos(1,idGrupo).enqueue(object : Callback<List<Gasto>> {
+            override fun onResponse(call: Call<List<Gasto>>, response: Response<List<Gasto>>) {
                 if (response.isSuccessful) {
                     response.body()?.let { createButtons(it) }
                 } else {
@@ -51,24 +46,22 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<List<Grupo>>, t: Throwable) {
-                Log.e("API_ERROR", "Request failed: ${t.message}")
+            override fun onFailure(call: Call<List<Gasto>>, t: Throwable) {
+                TODO("Not yet implemented")
             }
         })
     }
 
-    private fun createButtons(grupos: List<Grupo>) {
+    private fun createButtons(grupos: List<Gasto>) {
         buttonContainer.removeAllViews() // Clear previous buttons
 
         for (grupo in grupos) {
             val button = Button(this).apply {
-                text = grupo.nombre
+                text = "Detalle: "+ grupo.detalle + ", Monto: " + grupo.monto
                 setPadding(20, 20, 20, 20)
                 setOnClickListener {
-                    Toast.makeText(this@HomeActivity, "Clicked: ${grupo.nombre}", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this@HomeActivity, GrupoActivity::class.java)
-                    intent.putExtra("idGrupo", grupo.id);
-                    startActivity(intent)
+                    Toast.makeText(this@GrupoActivity, "Clicked: ${grupo.detalle}", Toast.LENGTH_SHORT).show()
+
 
                 }
             }

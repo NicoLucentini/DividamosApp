@@ -28,6 +28,10 @@
             android:name=".HomeActivity"
             android:label="@string/homeTitle">
         </activity>
+        <activity
+            android:name=".GrupoActivity"
+            android:label="@string/grupoTitle">
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET"/>

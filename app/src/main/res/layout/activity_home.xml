@@ -13,12 +13,13 @@
         android:text="Welcome, User!"
         android:textSize="20sp"
         android:gravity="start"
-        android:layout_marginTop="150dp" />
+        android:layout_marginTop="100dp" />
 
     <!-- Scrollable Container for Buttons -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="100dp">
 
         <LinearLayout
             android:id="@+id/buttonContainer"
@@ -27,5 +28,14 @@
             android:orientation="vertical" />
 
     </ScrollView>
+
+    <Button
+        android:id="@+id/btnMostrarPopup"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_marginTop="-64dp"
+        android:layout_marginBottom="0dp"
+        android:height="64dp"
+        android:text="Agregar Grupo" />
 
 </LinearLayout>

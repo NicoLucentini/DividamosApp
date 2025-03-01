@@ -57,5 +57,10 @@ interface ApiService {
         @Path("id") id: Int,
         @Path("idGrupo") idGrupo: Int,
     ): Call<List<Gasto>>
+
+    @POST("grupos/crearGrupo")  // Path variables in URL
+    fun crearGrupo(
+        @Body grupo: Grupo
+    ): Call<Void>
 }
 

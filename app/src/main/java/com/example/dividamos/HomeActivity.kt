@@ -1,5 +1,6 @@
 package com.example.dividamos
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -18,7 +19,9 @@ import retrofit2.Response
 class HomeActivity : AppCompatActivity() {
     private lateinit var welcomeText: TextView
     private lateinit var buttonContainer: LinearLayout
-
+    companion object {
+        var user_data : Usuario? = null
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -30,19 +33,27 @@ class HomeActivity : AppCompatActivity() {
 
         // Retrieve username from Intent
         //val username = intent.getStringExtra("nombre") ?: "Guest"
-        val usuario : Usuario? = intent.getParcelableExtra<Usuario>("user_data")
+        user_data  = intent.getParcelableExtra<Usuario>("user_data")
 
         //val username = intent.getStringExtra("nombre") ?: "Guest"
-        setTitle("Welcome , ${usuario?.nombre} , id ${usuario?.id}!")
+        setTitle("Welcome , ${user_data?.nombre} , id ${user_data?.id}!")
         welcomeText.text = "This are your groups"
+
+        val btnMostrarPopup = findViewById<Button>(R.id.btnMostrarPopup)
+        btnMostrarPopup.setOnClickListener {
+            val dialog = GrupoPopupFragment()
+            dialog.onStart(this)
+            dialog.show(supportFragmentManager, "GrupoPopupFragment")
+            dialog.onDestroy().apply { fetchGrupos() }
+        }
 
         // Fetch data from API
         fetchGrupos()
     }
 
-    private fun fetchGrupos() {
+    public fun fetchGrupos() {
 
-        RetrofitClient.apiService.getGrupos(1).enqueue(object : Callback<List<Grupo>> {
+        RetrofitClient.apiService.getGrupos(user_data?.id!!.toInt()).enqueue(object : Callback<List<Grupo>> {
             override fun onResponse(call: Call<List<Grupo>>, response: Response<List<Grupo>>) {
                 if (response.isSuccessful) {
                     response.body()?.let { createButtons(it) }

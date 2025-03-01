@@ -1,5 +1,6 @@
 package com.example.dividamos.apiservice
 
+import android.provider.ContactsContract.CommonDataKinds.Email
 import com.example.dividamos.Gasto
 import com.example.dividamos.Grupo
 import com.example.dividamos.Usuario
@@ -61,6 +62,12 @@ interface ApiService {
     @POST("grupos/crearGrupo")  // Path variables in URL
     fun crearGrupo(
         @Body grupo: Grupo
+    ): Call<Void>
+
+
+    @GET("usuarios/findByEmail/{email}")  // Path variables in URL
+    fun agregarParticipante(
+        @Path("email") email: String
     ): Call<Void>
 }
 

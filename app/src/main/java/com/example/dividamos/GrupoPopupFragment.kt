@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Adapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -21,6 +22,10 @@ import retrofit2.Response
 class GrupoPopupFragment : DialogFragment() {
 
     lateinit var activity : HomeActivity
+    lateinit var participantes : MutableList<String>
+    lateinit var recyclerView: RecyclerView
+    lateinit var emailParticipant : EditText
+
     public fun onStart(activity: HomeActivity){
         this.activity = activity
     }
@@ -28,12 +33,14 @@ class GrupoPopupFragment : DialogFragment() {
         val view = inflater.inflate(R.layout.dialog_group, container, false)
 
         val editTextNombreGrupo = view.findViewById<EditText>(R.id.editTextNombreGrupo)
-        val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerParticipantes)
+         recyclerView = view.findViewById<RecyclerView>(R.id.recyclerParticipantes)
         val btnCerrar = view.findViewById<Button>(R.id.btnCerrarPopup)
         val btnCrear = view.findViewById<Button>(R.id.btnAgregar)
-        // Configurar RecyclerView (Lista de Participantes)
+        val btnAddParticipant = view.findViewById<Button>(R.id.buttonAddParticipant)
+        emailParticipant = view.findViewById<EditText>(R.id.editTextParticipantEmail)
+
         recyclerView.layoutManager = LinearLayoutManager(context)
-        val participantes = listOf("Pepito", HomeActivity.user_data!!.nombre)
+        participantes = mutableListOf("Pepito", HomeActivity.user_data!!.nombre)
 
         recyclerView.adapter = ParticipantesAdapter(participantes) // Datos de prueba
 
@@ -46,9 +53,32 @@ class GrupoPopupFragment : DialogFragment() {
                 this.requireContext()
             )
         }
-
+        btnAddParticipant.setOnClickListener{
+            sendAddParticipantRequest(emailParticipant.text.toString(), this.requireContext())
+        }
         return view
     }
+
+    private fun sendAddParticipantRequest(participant: String, context: Context) {
+        RetrofitClient.apiService.agregarParticipante(participant).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+
+                println(response.body().toString() + " " + response.message() )
+                if (response.isSuccessful) {
+                    participantes.add(participant)
+                    recyclerView.adapter?.notifyDataSetChanged()
+                    emailParticipant.text.clear()
+                } else {
+                    Toast.makeText(context, "Login failed!", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
     fun sendCrearGrupoRequest(nombre: String, participantes : List<String>, context: android.content.Context) {
 
         val grupo = Grupo(nombre, participantes, -1)
@@ -58,7 +88,7 @@ class GrupoPopupFragment : DialogFragment() {
                 if (response.isSuccessful) {
                     onCreateSuccesfull()
                 } else {
-                    Toast.makeText(context, "Login failed!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "Login asdasd!", Toast.LENGTH_LONG).show()
                 }
             }
 

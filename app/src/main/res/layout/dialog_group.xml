@@ -13,27 +13,52 @@
         android:hint="Nombre del Grupo"
         android:padding="8dp"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:weightSum="10">
+
+        <EditText
+            android:id="@+id/editTextParticipantEmail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="7"
+            android:hint="Add participant Email"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/buttonAddParticipant"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="Add" />
+    </LinearLayout>
+
     <!-- Lista de Participantes -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerParticipantes"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:padding="8dp"/>
+        android:layout_marginTop="16dp"
+        android:padding="16dp"/>
 
     <!-- Botón para cerrar -->
     <Button
         android:id="@+id/btnAgregar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Crear"
+        android:layout_marginTop="32dp"
         android:backgroundTint="@color/teal_700"
-        android:textColor="@android:color/white"/>
+        android:text="Crear"
+        android:textColor="@android:color/white" />
     <!-- Botón para cerrar -->
     <Button
         android:id="@+id/btnCerrarPopup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Cancelar"
         android:backgroundTint="@android:color/holo_red_light"
-        android:textColor="@android:color/white"/>
+        android:text="Cancelar"
+        android:textColor="@android:color/white" />
 </LinearLayout>

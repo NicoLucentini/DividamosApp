@@ -17,37 +17,43 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class GrupoPopupFragment : DialogFragment() {
-
-    lateinit var activity : HomeActivity
-    lateinit var participantes : MutableList<String>
+class GastoPopupFragment : DialogFragment() {
+    lateinit var activity : GrupoActivity
+    var participantes : MutableList<String> = mutableListOf()
     lateinit var recyclerView: RecyclerView
     lateinit var emailParticipant : EditText
+    var idGrupo : Int = 0
 
-    public fun onStart(activity: HomeActivity){
+    public fun onStart(idGrupo: Int, activity: GrupoActivity){
         this.activity = activity
+        this.idGrupo = idGrupo
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.dialog_group, container, false)
+        val view = inflater.inflate(R.layout.dialog_gasto, container, false)
 
-        val editTextNombreGrupo = view.findViewById<EditText>(R.id.editTextNombreGrupo)
-         recyclerView = view.findViewById<RecyclerView>(R.id.recyclerParticipantes)
+        val editTextNombreGasto = view.findViewById<EditText>(R.id.editTextNombreGasto)
+        val editTextNombrePagador = view.findViewById<EditText>(R.id.editTextPagador)
+        val editTextMonto = view.findViewById<EditText>(R.id.editTextMonto)
+
+        recyclerView = view.findViewById<RecyclerView>(R.id.recyclerParticipantes)
         val btnCerrar = view.findViewById<Button>(R.id.btnCerrarPopup)
         val btnCrear = view.findViewById<Button>(R.id.btnAgregar)
         val btnAddParticipant = view.findViewById<Button>(R.id.buttonAddParticipant)
+
         emailParticipant = view.findViewById<EditText>(R.id.editTextParticipantEmail)
 
         recyclerView.layoutManager = LinearLayoutManager(context)
-        participantes = mutableListOf(HomeActivity.user_data!!.email)
 
         recyclerView.adapter = ParticipantesAdapter(participantes) // Datos de prueba
 
-        // Cerrar el Popup al hacer clic
         btnCerrar.setOnClickListener {
             dismiss()
         }
         btnCrear.setOnClickListener{
-            sendCrearGrupoRequest(editTextNombreGrupo.text.toString(), participantes,
+            sendCrearGastoRequest(idGrupo,
+                editTextNombreGasto.text.toString(),
+                editTextNombrePagador.text.toString(),
+                editTextMonto.text.toString().toFloat(),
                 this.requireContext()
             )
         }
@@ -77,11 +83,15 @@ class GrupoPopupFragment : DialogFragment() {
         })
     }
 
-    fun sendCrearGrupoRequest(nombre: String, participantes : List<String>, context: android.content.Context) {
+    private fun sendCrearGastoRequest(idGrupo : Int,
+                              nombre: String,
+                              nombrePagador: String,
+                              monto : Float,
+                                      context: android.content.Context) {
 
-        val grupo = Grupo(nombre, participantes, -1)
+        val gasto = Gasto(nombre, nombrePagador,participantes, monto)
 
-        RetrofitClient.apiService.crearGrupo(grupo).enqueue(object : Callback<Void> {
+        RetrofitClient.apiService.crearGasto(idGrupo, gasto).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     onCreateSuccesfull()
@@ -100,7 +110,7 @@ class GrupoPopupFragment : DialogFragment() {
     }
     fun onCreateSuccesfull(){
         Toast.makeText(context, "Grupo creado", Toast.LENGTH_SHORT).show()
-        activity.fetchGrupos()
+        activity.fetchGastos()
         dismiss()
     }
 }

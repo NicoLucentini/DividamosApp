@@ -63,6 +63,11 @@ interface ApiService {
     fun crearGrupo(
         @Body grupo: Grupo
     ): Call<Void>
+    @POST("grupos/agregarGasto/{idGrupo}")  // Path variables in URL
+    fun crearGasto(
+        @Path("idGrupo") idGrupo: Int,
+        @Body gasto: Gasto
+    ): Call<Void>
 
 
     @GET("usuarios/findByEmail/{email}")  // Path variables in URL

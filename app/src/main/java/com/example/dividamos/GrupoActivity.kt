@@ -1,5 +1,6 @@
 package com.example.dividamos
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -24,20 +25,27 @@ class GrupoActivity : AppCompatActivity() {
         // Get references
         welcomeText = findViewById(R.id.textViewWelcome)
         buttonContainer = findViewById(R.id.buttonContainer)
-
+        val addGastoButton = findViewById<Button>(R.id.btnAgregarGasto)
 
         // Retrieve username from Intent
-        idGrupo = intent.getStringExtra("idGrupo")?.toInt() ?: 0
+        idGrupo = intent.getIntExtra("idGrupo", 0)
         setTitle("Gastos!")
         welcomeText.text = "This are your gastos"
 
         // Fetch data from API
         fetchGastos()
+
+        addGastoButton.setOnClickListener{
+            val dialog = GastoPopupFragment()
+            dialog.onStart(idGrupo, this)
+            dialog.show(supportFragmentManager, "GastoPopupFragment")
+            dialog.onDestroy().apply { fetchGastos() }
+        }
     }
 
-    private fun fetchGastos() {
+    fun fetchGastos() {
 
-        RetrofitClient.apiService.getGastos(1,idGrupo).enqueue(object : Callback<List<Gasto>> {
+        RetrofitClient.apiService.getGastos(HomeActivity.user_data?.id!!.toInt(),idGrupo).enqueue(object : Callback<List<Gasto>> {
             override fun onResponse(call: Call<List<Gasto>>, response: Response<List<Gasto>>) {
                 if (response.isSuccessful) {
                     response.body()?.let { createButtons(it) }
@@ -47,7 +55,7 @@ class GrupoActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<List<Gasto>>, t: Throwable) {
-                TODO("Not yet implemented")
+                Log.e("API_ERROR", "Response unsuccessful")
             }
         })
     }

@@ -19,8 +19,10 @@ import retrofit2.Response
 class HomeActivity : AppCompatActivity() {
     private lateinit var welcomeText: TextView
     private lateinit var buttonContainer: LinearLayout
+
     companion object {
         var user_data : Usuario? = null
+        var grupo_data : Grupo ? =  null;
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,6 +81,7 @@ class HomeActivity : AppCompatActivity() {
                     Toast.makeText(this@HomeActivity, "Clicked: ${grupo.nombre}", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this@HomeActivity, GrupoActivity::class.java)
                     intent.putExtra("idGrupo", grupo.id);
+                    grupo_data = grupo
                     startActivity(intent)
 
                 }

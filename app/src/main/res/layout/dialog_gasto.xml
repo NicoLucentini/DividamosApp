@@ -26,6 +26,7 @@
         android:hint="Pagador"
         android:padding="8dp"/>
 
+    <!--
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -48,14 +49,14 @@
             android:layout_weight="3"
             android:text="Add" />
     </LinearLayout>
-
+-->
     <!-- Lista de Participantes -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerParticipantes"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_marginTop="16dp"
-        android:padding="16dp"/>
+        android:padding="0dp"/>
 
     <!-- Botón para cerrar -->
     <Button

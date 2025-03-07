@@ -20,13 +20,16 @@ import retrofit2.Response
 class GastoPopupFragment : DialogFragment() {
     lateinit var activity : GrupoActivity
     var participantes : MutableList<String> = mutableListOf()
+    var participants : MutableList<Participante> = mutableListOf()
     lateinit var recyclerView: RecyclerView
     lateinit var emailParticipant : EditText
     var idGrupo : Int = 0
+    var gasto : Gasto? = null
 
-    public fun onStart(idGrupo: Int, activity: GrupoActivity){
+    fun onStart(idGrupo: Int, activity: GrupoActivity, gasto: Gasto?){
         this.activity = activity
         this.idGrupo = idGrupo
+        this.gasto = gasto
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.dialog_gasto, container, false)
@@ -35,45 +38,74 @@ class GastoPopupFragment : DialogFragment() {
         val editTextNombrePagador = view.findViewById<EditText>(R.id.editTextPagador)
         val editTextMonto = view.findViewById<EditText>(R.id.editTextMonto)
 
-        recyclerView = view.findViewById<RecyclerView>(R.id.recyclerParticipantes)
         val btnCerrar = view.findViewById<Button>(R.id.btnCerrarPopup)
         val btnCrear = view.findViewById<Button>(R.id.btnAgregar)
-        val btnAddParticipant = view.findViewById<Button>(R.id.buttonAddParticipant)
 
-        emailParticipant = view.findViewById<EditText>(R.id.editTextParticipantEmail)
 
+        if(gasto!=null){
+            editTextNombreGasto.setText(gasto!!.detalle)
+            editTextNombrePagador.setText(gasto!!.nombrePagador)
+            editTextMonto.setText(gasto!!.monto.toString())
+
+        }
+        participantes = HomeActivity.grupo_data?.participantes!!.toMutableList()
+
+        recyclerView = view.findViewById<RecyclerView>(R.id.recyclerParticipantes)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        recyclerView.adapter = ParticipantesAdapter(participantes) // Datos de prueba
+        participants = participantes.map { Participante(it, gasto == null || gasto!!.nombrePagador != it) }.toMutableList()
+
+        val adapter = ParticipantesGastosAdapter(participants) { participant ->
+            if (participant.isSelected) {
+                participantes.add(participant.nombre) // Add to selected list
+            } else {
+                participantes.remove(participant.nombre) // Remove from selected list
+            }
+        }
+        recyclerView.adapter = adapter
 
         btnCerrar.setOnClickListener {
             dismiss()
         }
+        btnCrear.text = if(gasto==null) "Crear" else "Editar"
+
         btnCrear.setOnClickListener{
-            sendCrearGastoRequest(idGrupo,
-                editTextNombreGasto.text.toString(),
-                editTextNombrePagador.text.toString(),
-                editTextMonto.text.toString().toFloat(),
-                this.requireContext()
-            )
+            if(gasto == null)
+            {
+                sendCrearGastoRequest(idGrupo,
+                    editTextNombreGasto.text.toString(),
+                    editTextNombrePagador.text.toString(),
+                    editTextMonto.text.toString().toFloat(),
+                    this.requireContext()
+                )
+            }
+            else{
+                sendEditarGastoRequest(gasto!!.id,
+                    editTextNombreGasto.text.toString(),
+                    editTextNombrePagador.text.toString(),
+                    editTextMonto.text.toString().toFloat(),
+                    this.requireContext())
+            }
+
         }
-        btnAddParticipant.setOnClickListener{
-            sendAddParticipantRequest(emailParticipant.text.toString(), this.requireContext())
-        }
+
         return view
     }
+    private fun sendCrearGastoRequest(idGrupo : Int,
+                              nombre: String,
+                              nombrePagador: String,
+                              monto : Float,
+                                      context: Context) {
 
-    private fun sendAddParticipantRequest(participant: String, context: Context) {
-        RetrofitClient.apiService.agregarParticipante(participant).enqueue(object : Callback<Void> {
+        participantes = participants.filter { it.isSelected }.map { it.nombre }.toMutableList()
+        val gasto = Gasto(nombre, nombrePagador,participantes, monto,-1)
+
+        RetrofitClient.apiService.crearGasto(idGrupo, gasto).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
-
-                println(response.body().toString() + " " + response.message() )
                 if (response.isSuccessful) {
-                    participantes.add(participant)
-                    recyclerView.adapter?.notifyDataSetChanged()
-                    emailParticipant.text.clear()
+                    onCreateSuccesfull()
                 } else {
-                    Toast.makeText(context, "Login failed!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "Login asdasd!", Toast.LENGTH_LONG).show()
                 }
             }
 
@@ -82,16 +114,16 @@ class GastoPopupFragment : DialogFragment() {
             }
         })
     }
+    private fun sendEditarGastoRequest(idGasto : Int,
+                                      nombre: String,
+                                      nombrePagador: String,
+                                      monto : Float,
+                                      context: Context) {
 
-    private fun sendCrearGastoRequest(idGrupo : Int,
-                              nombre: String,
-                              nombrePagador: String,
-                              monto : Float,
-                                      context: android.content.Context) {
+        participantes = participants.filter { it.isSelected }.map { it.nombre }.toMutableList()
+        val gasto = Gasto(nombre, nombrePagador,participantes, monto, idGasto)
 
-        val gasto = Gasto(nombre, nombrePagador,participantes, monto)
-
-        RetrofitClient.apiService.crearGasto(idGrupo, gasto).enqueue(object : Callback<Void> {
+        RetrofitClient.apiService.editarGasto(idGasto, gasto).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     onCreateSuccesfull()
@@ -109,7 +141,7 @@ class GastoPopupFragment : DialogFragment() {
         return Dialog(requireContext(), android.R.style.Theme_Material_Light_Dialog_Alert)
     }
     fun onCreateSuccesfull(){
-        Toast.makeText(context, "Grupo creado", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Gasto editado correctamente", Toast.LENGTH_SHORT).show()
         activity.fetchGastos()
         dismiss()
     }

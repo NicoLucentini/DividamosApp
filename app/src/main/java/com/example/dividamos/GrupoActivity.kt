@@ -1,6 +1,5 @@
 package com.example.dividamos
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -29,7 +28,7 @@ class GrupoActivity : AppCompatActivity() {
 
         // Retrieve username from Intent
         idGrupo = intent.getIntExtra("idGrupo", 0)
-        setTitle("Gastos!")
+        setTitle("Gastos del grupo ${HomeActivity.grupo_data!!.nombre}!")
         welcomeText.text = "This are your gastos"
 
         // Fetch data from API
@@ -37,7 +36,7 @@ class GrupoActivity : AppCompatActivity() {
 
         addGastoButton.setOnClickListener{
             val dialog = GastoPopupFragment()
-            dialog.onStart(idGrupo, this)
+            dialog.onStart(idGrupo, this, null)
             dialog.show(supportFragmentManager, "GastoPopupFragment")
             dialog.onDestroy().apply { fetchGastos() }
         }
@@ -60,16 +59,21 @@ class GrupoActivity : AppCompatActivity() {
         })
     }
 
-    private fun createButtons(grupos: List<Gasto>) {
+    private fun createButtons(gastos: List<Gasto>) {
         buttonContainer.removeAllViews() // Clear previous buttons
 
-        for (grupo in grupos) {
+        for (gasto in gastos) {
             val button = Button(this).apply {
-                text = "Detalle: "+ grupo.detalle + ", Monto: " + grupo.monto
+                text = "Detalle: "+ gasto.detalle + ", Monto: " + gasto.monto
                 setPadding(20, 20, 20, 20)
-                setOnClickListener {
-                    Toast.makeText(this@GrupoActivity, "Clicked: ${grupo.detalle}", Toast.LENGTH_SHORT).show()
 
+                setOnClickListener {
+
+                    val dialog = GastoPopupFragment()
+                    dialog.onStart(idGrupo, this@GrupoActivity, gasto)
+                    dialog.show(supportFragmentManager, "GastoPopupFragment")
+                    dialog.onDestroy().apply { fetchGastos() }
+                    Toast.makeText(this@GrupoActivity, "Clicked: ${gasto.detalle}", Toast.LENGTH_SHORT).show()
 
                 }
             }

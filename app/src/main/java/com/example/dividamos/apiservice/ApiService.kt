@@ -11,6 +11,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 object RetrofitClient {
@@ -66,6 +67,11 @@ interface ApiService {
     @POST("grupos/agregarGasto/{idGrupo}")  // Path variables in URL
     fun crearGasto(
         @Path("idGrupo") idGrupo: Int,
+        @Body gasto: Gasto
+    ): Call<Void>
+    @PUT("gastos/editarGasto/{id}")  // Path variables in URL
+    fun editarGasto(
+        @Path("id") id: Int,
         @Body gasto: Gasto
     ): Call<Void>
 

@@ -13,9 +13,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dividamos.apiservice.RetrofitClient
+import com.example.dividamos.apiservice.callRetrofit
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class GastoPopupFragment : DialogFragment() {
     lateinit var activity : GrupoActivity
@@ -25,6 +24,8 @@ class GastoPopupFragment : DialogFragment() {
     lateinit var emailParticipant : EditText
     var idGrupo : Int = 0
     var gasto : Gasto? = null
+    lateinit var btnCerrar : Button
+    lateinit var btnCrear : Button
 
     fun onStart(idGrupo: Int, activity: GrupoActivity, gasto: Gasto?){
         this.activity = activity
@@ -37,9 +38,9 @@ class GastoPopupFragment : DialogFragment() {
         val editTextNombreGasto = view.findViewById<EditText>(R.id.editTextNombreGasto)
         val editTextNombrePagador = view.findViewById<EditText>(R.id.editTextPagador)
         val editTextMonto = view.findViewById<EditText>(R.id.editTextMonto)
-
-        val btnCerrar = view.findViewById<Button>(R.id.btnCerrarPopup)
-        val btnCrear = view.findViewById<Button>(R.id.btnAgregar)
+        val btnMe = view.findViewById<Button>(R.id.buttonMe)
+        btnCerrar = view.findViewById<Button>(R.id.btnCerrarPopup)
+        btnCrear = view.findViewById<Button>(R.id.btnAgregar)
 
 
         if(gasto!=null){
@@ -63,7 +64,16 @@ class GastoPopupFragment : DialogFragment() {
             }
         }
         recyclerView.adapter = adapter
+        btnMe.setOnClickListener{
 
+            val email = HomeActivity.user_data!!.email
+            editTextNombrePagador.setText( email)
+            participants.forEach {
+                if (it.nombre.equals(email))
+                    it.isSelected = false
+            }
+            adapter.notifyDataSetChanged()
+        }
         btnCerrar.setOnClickListener {
             dismiss()
         }
@@ -97,52 +107,48 @@ class GastoPopupFragment : DialogFragment() {
                               monto : Float,
                                       context: Context) {
 
+        btnCrear.isEnabled = false
         participantes = participants.filter { it.isSelected }.map { it.nombre }.toMutableList()
         val gasto = Gasto(nombre, nombrePagador,participantes, monto,-1)
 
-        RetrofitClient.apiService.crearGasto(idGrupo, gasto).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    onCreateSuccesfull()
-                } else {
-                    Toast.makeText(context, "Login asdasd!", Toast.LENGTH_LONG).show()
-                }
-            }
 
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+        callRetrofit(RetrofitClient.apiService.crearGasto(idGrupo, gasto))
     }
     private fun sendEditarGastoRequest(idGasto : Int,
                                       nombre: String,
                                       nombrePagador: String,
                                       monto : Float,
                                       context: Context) {
-
+        btnCrear.isEnabled = false
         participantes = participants.filter { it.isSelected }.map { it.nombre }.toMutableList()
         val gasto = Gasto(nombre, nombrePagador,participantes, monto, idGasto)
 
-        RetrofitClient.apiService.editarGasto(idGasto, gasto).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    onCreateSuccesfull()
-                } else {
-                    Toast.makeText(context, "Login asdasd!", Toast.LENGTH_LONG).show()
-                }
-            }
+        callRetrofit(RetrofitClient.apiService.editarGasto(idGasto, gasto))
 
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
     }
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return Dialog(requireContext(), android.R.style.Theme_Material_Light_Dialog_Alert)
     }
+    fun <T> callRetrofit(call : Call<T>){
+        callRetrofit(
+            call,
+            onSuccess = { onCreateSuccesfull() },
+            onError = { errorMessage -> onCreateError(errorMessage) },
+            onFailure = { throwable ->  onCreateFailure(throwable)}
+        )
+    }
     fun onCreateSuccesfull(){
+        btnCrear.isEnabled = true
         Toast.makeText(context, "Gasto editado correctamente", Toast.LENGTH_SHORT).show()
         activity.fetchGastos()
         dismiss()
+    }
+    fun onCreateError(errorMessage :String){
+        btnCrear.isEnabled = true
+        Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+    }
+    fun onCreateFailure(throwable :Throwable){
+        btnCrear.isEnabled = true
+        Toast.makeText(context, "Network error: ${throwable.message}", Toast.LENGTH_SHORT).show()
     }
 }

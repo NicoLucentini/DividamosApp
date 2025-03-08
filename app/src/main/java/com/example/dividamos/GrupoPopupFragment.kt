@@ -79,6 +79,12 @@ class GrupoPopupFragment : DialogFragment() {
 
     fun sendCrearGrupoRequest(nombre: String, participantes : List<String>, context: android.content.Context) {
 
+        if(nombre.isEmpty()){
+            Toast.makeText(context, "Nombre del grupo vacio!", Toast.LENGTH_LONG).show()
+            return
+        }
+
+
         val grupo = Grupo(nombre, participantes, -1)
 
         RetrofitClient.apiService.crearGrupo(grupo).enqueue(object : Callback<Void> {

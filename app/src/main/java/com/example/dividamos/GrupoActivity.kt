@@ -29,7 +29,7 @@ class GrupoActivity : AppCompatActivity() {
         // Retrieve username from Intent
         idGrupo = intent.getIntExtra("idGrupo", 0)
         setTitle("Gastos del grupo ${HomeActivity.grupo_data!!.nombre}!")
-        welcomeText.text = "This are your gastos"
+        welcomeText.text = "Estos son tus gastos"
 
         // Fetch data from API
         fetchGastos()

@@ -15,7 +15,8 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 object RetrofitClient {
-    private const val BASE_URL = "http://192.168.1.35:8080/"
+    //private const val BASE_URL = "http://192.168.1.35:8080/"
+    private const val BASE_URL = " https://dividamos.onrender.com/"
 
     val apiService: ApiService by lazy {
         Retrofit.Builder()

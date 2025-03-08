@@ -1,10 +1,8 @@
 package com.example.dividamos
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -38,8 +36,8 @@ class HomeActivity : AppCompatActivity() {
         user_data  = intent.getParcelableExtra<Usuario>("user_data")
 
         //val username = intent.getStringExtra("nombre") ?: "Guest"
-        setTitle("Welcome , ${user_data?.nombre} , id ${user_data?.id}!")
-        welcomeText.text = "This are your groups"
+        setTitle("Hola , ${user_data?.nombre} , id ${user_data?.id}!")
+        welcomeText.text = "Estos son tus grupos"
 
         val btnMostrarPopup = findViewById<Button>(R.id.btnMostrarPopup)
         btnMostrarPopup.setOnClickListener {

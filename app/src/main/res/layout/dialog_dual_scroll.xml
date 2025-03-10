@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@android:color/white">
+
+    <!-- Dialog Title -->
+    <TextView
+        android:id="@+id/dialogTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Detalle Transacciones"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="8dp" />
+
+    <!-- Two Scrollable Sections -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <!-- Transactions Scroll -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingEnd="8dp">
+
+            <TextView
+                android:id="@+id/titleTransactions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Transacciones"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingBottom="4dp"
+                android:textColor="@color/black"/>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="@android:color/darker_gray"
+                android:padding="8dp">
+
+                <LinearLayout
+                    android:id="@+id/containerTransactions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+            </ScrollView>
+        </LinearLayout>
+
+        <!-- Items Scroll -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingStart="8dp">
+
+            <TextView
+                android:id="@+id/titleItems"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Items"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingBottom="4dp"
+                android:textColor="@color/black"/>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="@android:color/darker_gray"
+                android:padding="8dp">
+
+                <LinearLayout
+                    android:id="@+id/containerItems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+            </ScrollView>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Close Button -->
+    <Button
+        android:id="@+id/btnCloseDialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cerrar"
+        android:layout_marginTop="12dp" />
+</LinearLayout>

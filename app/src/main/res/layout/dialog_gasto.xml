@@ -66,6 +66,13 @@
         android:backgroundTint="@android:color/holo_red_light"
         android:text="Cancelar"
         android:textColor="@android:color/white" />
+    <Button
+        android:id="@+id/btnEliminar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/holo_red_dark"
+        android:text="Eliminar"
+        android:textColor="@android:color/white" />
 
 
 </LinearLayout>

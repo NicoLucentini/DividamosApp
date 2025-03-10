@@ -1,4 +1,4 @@
-package com.example.dividamos
+package com.example.dividamos.entities
 
 data class Gasto(
     val detalle: String,

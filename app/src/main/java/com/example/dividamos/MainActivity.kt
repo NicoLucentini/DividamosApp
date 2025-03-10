@@ -7,6 +7,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.example.dividamos.apiservice.RetrofitClient
+import com.example.dividamos.entities.Usuario
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

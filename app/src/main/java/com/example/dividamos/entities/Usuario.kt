@@ -1,4 +1,4 @@
-package com.example.dividamos
+package com.example.dividamos.entities
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 

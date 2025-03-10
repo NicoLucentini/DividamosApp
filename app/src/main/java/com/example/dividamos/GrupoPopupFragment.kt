@@ -13,6 +13,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dividamos.apiservice.RetrofitClient
+import com.example.dividamos.entities.Grupo
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -58,7 +59,7 @@ class GrupoPopupFragment : DialogFragment() {
     }
 
     private fun sendAddParticipantRequest(participant: String, context: Context) {
-        RetrofitClient.apiService.agregarParticipante(participant).enqueue(object : Callback<Void> {
+        RetrofitClient.apiService.buscarPorEmail(participant).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
 
                 println(response.body().toString() + " " + response.message() )

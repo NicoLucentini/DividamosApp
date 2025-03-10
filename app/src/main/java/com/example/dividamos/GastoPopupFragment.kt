@@ -1,7 +1,6 @@
 package com.example.dividamos
 
 import android.app.Dialog
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,11 +8,13 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dividamos.apiservice.RetrofitClient
 import com.example.dividamos.apiservice.callRetrofit
+import com.example.dividamos.entities.Gasto
 import retrofit2.Call
 
 class GastoPopupFragment : DialogFragment() {
@@ -39,6 +40,8 @@ class GastoPopupFragment : DialogFragment() {
         val editTextNombrePagador = view.findViewById<EditText>(R.id.editTextPagador)
         val editTextMonto = view.findViewById<EditText>(R.id.editTextMonto)
         val btnMe = view.findViewById<Button>(R.id.buttonMe)
+        val btnElminarGasto = view.findViewById<Button>(R.id.btnEliminar)
+
         btnCerrar = view.findViewById<Button>(R.id.btnCerrarPopup)
         btnCrear = view.findViewById<Button>(R.id.btnAgregar)
 
@@ -78,6 +81,11 @@ class GastoPopupFragment : DialogFragment() {
             dismiss()
         }
         btnCrear.text = if(gasto==null) "Crear" else "Editar"
+        btnElminarGasto.isVisible = (gasto != null)
+
+        btnElminarGasto.setOnClickListener{
+            sendEliminarGasto(gasto!!.id)
+        }
 
         btnCrear.setOnClickListener{
             if(gasto == null)
@@ -85,27 +93,27 @@ class GastoPopupFragment : DialogFragment() {
                 sendCrearGastoRequest(idGrupo,
                     editTextNombreGasto.text.toString(),
                     editTextNombrePagador.text.toString(),
-                    editTextMonto.text.toString().toFloat(),
-                    this.requireContext()
+                    editTextMonto.text.toString().toFloat()
                 )
             }
             else{
                 sendEditarGastoRequest(gasto!!.id,
                     editTextNombreGasto.text.toString(),
                     editTextNombrePagador.text.toString(),
-                    editTextMonto.text.toString().toFloat(),
-                    this.requireContext())
+                    editTextMonto.text.toString().toFloat())
             }
 
         }
 
         return view
     }
+    private fun sendEliminarGasto(id: Int) {
+        callRetrofit(RetrofitClient.apiService.eliminarGasto(id))
+    }
     private fun sendCrearGastoRequest(idGrupo : Int,
                               nombre: String,
                               nombrePagador: String,
-                              monto : Float,
-                                      context: Context) {
+                              monto : Float) {
 
         btnCrear.isEnabled = false
         participantes = participants.filter { it.isSelected }.map { it.nombre }.toMutableList()
@@ -117,8 +125,7 @@ class GastoPopupFragment : DialogFragment() {
     private fun sendEditarGastoRequest(idGasto : Int,
                                       nombre: String,
                                       nombrePagador: String,
-                                      monto : Float,
-                                      context: Context) {
+                                      monto : Float) {
         btnCrear.isEnabled = false
         participantes = participants.filter { it.isSelected }.map { it.nombre }.toMutableList()
         val gasto = Gasto(nombre, nombrePagador,participantes, monto, idGasto)
@@ -129,7 +136,7 @@ class GastoPopupFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return Dialog(requireContext(), android.R.style.Theme_Material_Light_Dialog_Alert)
     }
-    fun <T> callRetrofit(call : Call<T>){
+    private fun <T> callRetrofit(call : Call<T>){
         callRetrofit(
             call,
             onSuccess = { onCreateSuccesfull() },
@@ -137,17 +144,17 @@ class GastoPopupFragment : DialogFragment() {
             onFailure = { throwable ->  onCreateFailure(throwable)}
         )
     }
-    fun onCreateSuccesfull(){
+    private fun onCreateSuccesfull(){
         btnCrear.isEnabled = true
         Toast.makeText(context, "Gasto editado correctamente", Toast.LENGTH_SHORT).show()
         activity.fetchGastos()
         dismiss()
     }
-    fun onCreateError(errorMessage :String){
+    private fun onCreateError(errorMessage :String){
         btnCrear.isEnabled = true
         Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
     }
-    fun onCreateFailure(throwable :Throwable){
+    private fun onCreateFailure(throwable :Throwable){
         btnCrear.isEnabled = true
         Toast.makeText(context, "Network error: ${throwable.message}", Toast.LENGTH_SHORT).show()
     }

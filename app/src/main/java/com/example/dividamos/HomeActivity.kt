@@ -9,6 +9,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dividamos.apiservice.RetrofitClient
+import com.example.dividamos.entities.Grupo
+import com.example.dividamos.entities.Usuario
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,7 +22,7 @@ class HomeActivity : AppCompatActivity() {
 
     companion object {
         var user_data : Usuario? = null
-        var grupo_data : Grupo ? =  null;
+        var grupo_data : Grupo? =  null;
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

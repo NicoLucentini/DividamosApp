@@ -1,14 +1,15 @@
 package com.example.dividamos.apiservice
 
-import android.provider.ContactsContract.CommonDataKinds.Email
-import com.example.dividamos.Gasto
-import com.example.dividamos.Grupo
-import com.example.dividamos.Usuario
+import com.example.dividamos.entities.CalcularGastosResponse
+import com.example.dividamos.entities.Gasto
+import com.example.dividamos.entities.Grupo
+import com.example.dividamos.entities.Usuario
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -70,16 +71,30 @@ interface ApiService {
         @Path("idGrupo") idGrupo: Int,
         @Body gasto: Gasto
     ): Call<Void>
+    @GET("grupos/calcularGastos/{idGrupo}")  // Path variables in URL
+    fun liquidarGastos(
+        @Path("idGrupo") idGrupo: Int
+    ): Call<CalcularGastosResponse>
     @PUT("gastos/editarGasto/{id}")  // Path variables in URL
     fun editarGasto(
         @Path("id") id: Int,
         @Body gasto: Gasto
     ): Call<Void>
+    @DELETE("gastos/eliminarGasto/{id}")  // Path variables in URL
+    fun eliminarGasto(
+        @Path("id") id: Int
+    ): Call<Void>
 
 
     @GET("usuarios/findByEmail/{email}")  // Path variables in URL
-    fun agregarParticipante(
+    fun buscarPorEmail(
         @Path("email") email: String
+    ): Call<Void>
+
+    @POST("grupos/agregarParticipante/{idGrupo}/{participante}")  // Path variables in URL
+    fun agregarParticipante(
+        @Path("idGrupo") idGrupo: Int,
+        @Path("participante") participante: String
     ): Call<Void>
 }
 

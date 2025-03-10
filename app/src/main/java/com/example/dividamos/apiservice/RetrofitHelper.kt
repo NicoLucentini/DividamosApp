@@ -1,5 +1,6 @@
 package com.example.dividamos.apiservice
 
+import android.widget.Button
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -23,4 +24,19 @@ fun <T> callRetrofit(
             onFailure(t)
         }
     })
+}
+fun <T> callRetrofitWithButton(
+    call: Call<T>,
+    onSuccess: (T?) -> Unit,
+    onError: (String) -> Unit,
+    onFailure: (Throwable) -> Unit,
+    button : Button
+){
+    button.isEnabled = false
+    callRetrofit(
+        call = call,
+        onSuccess = {b -> button.isEnabled = true; onSuccess(b)},
+        onError = {e -> button.isEnabled = true; onError(e)},
+        onFailure = {t -> button.isEnabled = true; onFailure(t)}
+    )
 }
